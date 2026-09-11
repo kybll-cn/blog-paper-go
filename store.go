@@ -208,7 +208,9 @@ CREATE TABLE IF NOT EXISTS posts (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci`
 
 // migrate 连接（不选库）→ CREATE DATABASE → 选库建表。
-// 返回已选中目标库的连接。
+// 容错：专用子账号（推荐用法）通常没有 CREATE 权限——建库失败时
+// 先试"直接连目标库"，库已存在（DBA 提前建好）就继续安装，
+// 连不上才把原始错误抛回去。
 func migrate(c *Config) error {
 	root, err := sql.Open("mysql", c.DSN(""))
 	if err != nil {
@@ -216,10 +218,20 @@ func migrate(c *Config) error {
 	}
 	defer root.Close()
 
-	if _, err := root.Exec(
+	_, createErr := root.Exec(
 		"CREATE DATABASE IF NOT EXISTS `" + sanitizeIdent(c.DBName) + "` " +
-			"DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"); err != nil {
-		return err
+			"DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+	if createErr != nil {
+		// 大概率是 Access denied（子账号无建库权限）。
+		// 试一下库是否已由 DBA 建好：ping 目标库，通了就当前提继续。
+		probe, perr := sql.Open("mysql", c.DSN(c.DBName))
+		if perr != nil || probe.Ping() != nil {
+			if probe != nil {
+				probe.Close()
+			}
+			return fmt.Errorf("无法创建数据库 %q（%v）；如果库已存在但仍报此错，请确认用户有该库权限，或手动执行安装页里的建库 SQL", c.DBName, createErr)
+		}
+		probe.Close() // 库已存在，继续往下走建表
 	}
 	if err := openDB(c.DSN(c.DBName)); err != nil {
 		return err

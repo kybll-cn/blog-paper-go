@@ -17,12 +17,12 @@ const TEST_PASS = process.env.KY_TEST_PASS || 'kongyu2026';
   await b.viewport(1440, 1000);
 
   /* --- 0. 先清掉旧会话：logout --- */
-  await b.goto('http://127.0.0.1:8080/index.html');
+  await b.goto('http://127.0.0.1:6888/index.html');
   await b.eval(`fetch('api/logout',{method:'POST'}).catch(()=>{})`);
   await sleep(300);
 
   /* --- 1. 进后台，点发布（此时未登录）--- */
-  await b.goto('http://127.0.0.1:8080/edit/');
+  await b.goto('http://127.0.0.1:6888/edit/');
   await sleep(2500); // 等探测完成
   const badge1 = await b.eval(`document.getElementById('modeBadge').textContent`);
   console.log('1a 未登录徽标:', badge1);

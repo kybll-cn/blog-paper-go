@@ -24,11 +24,11 @@
 tar xzf kongyu-linux-amd64.tar.gz && cd kongyu-linux-amd64
 # Windows: 解压 zip 即可
 
-# 2. 运行（默认监听 :8080）
+# 2. 运行（默认监听 :6888）
 ./kongyu-linux-amd64
 # Windows: 双击 kongyu-windows-amd64.exe，或命令行运行
 
-# 3. 浏览器打开 http://服务器IP:8080
+# 3. 浏览器打开 http://服务器IP:6888
 #    → 自动跳转 /install 安装向导
 #    → 填数据库连接 + 管理员账号 + 站点信息 → 安装
 #    → 完成后自动跳 /login，登录即可写作
@@ -53,7 +53,7 @@ Type=simple
 User=kongyu
 WorkingDirectory=/opt/kongyu
 ExecStart=/opt/kongyu/kongyu-linux-amd64
-Environment=KY_ADDR=127.0.0.1:8080
+Environment=KY_ADDR=127.0.0.1:6888
 Restart=on-failure
 # 安全加固
 NoNewPrivileges=true
@@ -86,7 +86,7 @@ server {
     client_max_body_size 20m;          # 与上传上限对齐，否则大附件被网关先掐
 
     location / {
-        proxy_pass         http://127.0.0.1:8080;
+        proxy_pass         http://127.0.0.1:6888;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
@@ -105,7 +105,7 @@ server {
 
 | 变量 | 默认 | 说明 |
 | --- | --- | --- |
-| `KY_ADDR` | `:8080` | 监听地址。反代后建议 `127.0.0.1:8080` 只监听本地 |
+| `KY_ADDR` | `:6888` | 监听地址。反代后建议 `127.0.0.1:6888` 只监听本地 |
 
 其余配置（数据库、站点信息、密钥）都在 `config.json`，由安装向导生成。
 

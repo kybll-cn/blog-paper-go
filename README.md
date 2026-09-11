@@ -35,7 +35,7 @@ go build -o kongyu.exe .
 ./kongyu.exe -import
 ```
 
-打开 `http://localhost:8080`：前台免登录阅读；`/login` 登录写作；`/edit` 进后台。
+打开 `http://localhost:6888`：前台免登录阅读；`/login` 登录写作；`/edit` 进后台。
 改过前端文件后重新 `go build` 即可把新 `web/` 打进二进制（部署只需拷走 exe 一个文件）。
 
 重装：删 `config.json` 重启，回到安装向导。
@@ -69,7 +69,7 @@ go build -o kongyu.exe .
 - **动态 robots**：`/robots.txt` 屏蔽 `/edit` `/login` `/install` `/api/`，并自动带上当前域名的 `Sitemap:` 行——换域名零配置。
 - **canonical 自适应**：从 `Host` / `X-Forwarded-Proto` / `X-Forwarded-Host` 推断站点绝对地址，Nginx 反代 + HTTPS 终结下无需改代码。
 
-环境变量：`KY_ADDR`（监听地址，默认 `:8080`）。其余配置（数据库参数、管理员哈希、会话密钥）都在 `config.json`。
+环境变量：`KY_ADDR`（监听地址，默认 `:6888`）。其余配置（数据库参数、管理员哈希、会话密钥）都在 `config.json`。
 
 ## 二、目录结构
 
@@ -145,7 +145,7 @@ node tools/build-manifest.js
 
 ### 上线
 
-- **服务器模式**：发布即上线。部署 = 拷走 `kongyu.exe` 一个文件（首次运行走 /install 向导配数据库），Nginx 反代到 `:8080` 即可。
+- **服务器模式**：发布即上线。部署 = 拷走 `kongyu.exe` 一个文件（首次运行走 /install 向导配数据库），Nginx 反代到 `:6888` 即可。
 - **纯静态模式**：把导出的 `manifest.js` 覆盖到 `web/posts/manifest.js`，把 `.md` 放进 `web/posts/src/` 归档，然后部署 `web/` 目录（Nginx 静态托管、COS/GitHub Pages/任意静态空间都行）。
 
 ## 五、支持的 Markdown

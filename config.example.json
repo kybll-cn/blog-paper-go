@@ -2,10 +2,11 @@
   "_说明": "这是配置样例，正常情况下你不需要手写它——直接运行程序，浏览器访问任意页面会自动进入 /install 安装向导，填表后程序会生成真正的 config.json（含随机盐、口令哈希、会话密钥）。",
   "_警告": "真实的 config.json 含数据库密码与密钥，已在 .gitignore 中排除，切勿提交到公开仓库。",
 
+  "_安全提示": "强烈建议为本站建一个专用子账号（如 kongyu），GRANT 权限只到本站库，不要用 root。建号 SQL 见安装页 /install 或 docs/DEPLOY.md。",
   "db_host": "127.0.0.1",
   "db_port": "3306",
-  "db_user": "root",
-  "db_pass": "你的数据库密码",
+  "db_user": "kongyu",
+  "db_pass": "子账号的密码",
   "db_name": "kongyu",
 
   "site_name": "空雨不流泪",

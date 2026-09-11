@@ -18,7 +18,7 @@ const TINY_PNG = Buffer.from(
   await b.viewport(1440, 1000);
 
   /* 1. 登录 */
-  await b.goto('http://127.0.0.1:8080/login');
+  await b.goto('http://127.0.0.1:6888/login');
   await sleep(800);
   await b.eval(`document.getElementById('user').value='${TEST_USER}';
                 document.getElementById('pass').value='${TEST_PASS}';
@@ -26,7 +26,7 @@ const TINY_PNG = Buffer.from(
   await sleep(2500);
 
   /* 2. 真上传一张图（内置最小 PNG，不依赖仓库外素材） */
-  await b.goto('http://127.0.0.1:8080/edit/');
+  await b.goto('http://127.0.0.1:6888/edit/');
   await sleep(2500);
   await b.eval(`window.__pngB64 = ${JSON.stringify(TINY_PNG.toString('base64'))};`);
   const up = await b.evalJson(`(async () => {
@@ -53,7 +53,7 @@ const TINY_PNG = Buffer.from(
   console.log('3a 发布 toast:', await b.eval(`var t=document.querySelector('.toast');t?t.textContent:'-'`));
 
   /* 4. 打开文章页看卡片与图片 */
-  await b.goto('http://127.0.0.1:8080/p/%E9%99%84%E4%BB%B6%E4%B8%8B%E8%BD%BD%E6%BC%94%E7%A4%BA');
+  await b.goto('http://127.0.0.1:6888/p/%E9%99%84%E4%BB%B6%E4%B8%8B%E8%BD%BD%E6%BC%94%E7%A4%BA');
   await sleep(2500);
   console.log('4a 下载卡片:', await b.eval(`var c=document.querySelector('.dl-card'); c ? c.innerText.replace(/\\n/g,' | ') : '无卡片'`));
   console.log('4b 图片 src 可达:', await b.eval(`(async()=>{var img=document.querySelector('.prose img');if(!img)return '无图';var r=await fetch(img.getAttribute('src'));return r.status+' '+r.headers.get('content-type')})()`));
@@ -64,7 +64,7 @@ const TINY_PNG = Buffer.from(
   await b.shot(SHOT('19-dl-card.png'));
 
   /* 5. 站点设置面板 */
-  await b.goto('http://127.0.0.1:8080/edit/');
+  await b.goto('http://127.0.0.1:6888/edit/');
   await sleep(2500);
   await b.eval(`document.getElementById('btnSettings').click()`);
   await sleep(800);

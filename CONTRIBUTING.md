@@ -14,7 +14,7 @@
 git clone https://github.com/kybll-cn/blog-paper-go.git && cd blog-paper-go
 go build -o kongyu .
 
-# 起一个本地 MariaDB，然后运行程序，浏览器打开 http://localhost:8080
+# 起一个本地 MariaDB，然后运行程序，浏览器打开 http://localhost:6888
 # 首次自动进 /install 向导（填你本地数据库的连接信息即可）
 ./kongyu
 ```
@@ -41,7 +41,7 @@ node tools/selftest.js        # 56 项断言：Markdown 解析 + 数据层双模
 go vet ./... && go build ./...
 ```
 
-端到端验收（需服务在 8080 运行 + 本机 Chrome）：
+端到端验收（需服务在 6888 运行 + 本机 Chrome）：
 
 ```bash
 node tools/browser-verify.js   # 登录门禁 → 回跳 → 发布 → SSE 同步

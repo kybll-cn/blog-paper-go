@@ -9,8 +9,8 @@ const { launch } = require('./lib/cdp.js');
   await b.viewport(1440, 900);
 
   for (const url of [
-    'http://127.0.0.1:8080/edit/',
-    'http://127.0.0.1:8080/index.html',
+    'http://127.0.0.1:6888/edit/',
+    'http://127.0.0.1:6888/index.html',
   ]) {
     console.log('\n========== ' + url + ' ==========');
     const t0 = Date.now();

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-page-node-id="V2tOtIdkE9cuBsTQPnWQZI">
-<head data-page-node-id="H4SumpISIE8X99gHW9Pw5w">
-<meta charset="UTF-8" data-page-node-id="9279kvWvdt9lmdQAimhoW7">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="6Mq2mURJLkUc9kyoTBnF0r">
+<html lang="zh-CN" data-theme="light" data-page-node-id="GwDarzBMUomtq8bA4rwtc6">
+<head data-page-node-id="7rMjImaNSz8jbxCzBeWLHs">
+<meta charset="UTF-8" data-page-node-id="21fqCymgfzrlY2Vbid9pDB">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="9ETjMmlM2Ve2fCxMasbeCa">
 <title>安装向导 · 空雨不流泪</title>
-<meta name="robots" content="noindex, nofollow" data-page-node-id="YCZQ5GUoCMjF4UqULJAlKw">
-<link rel="stylesheet" href="assets/style.css" data-page-node-id="CHzqNNVt9hxdb2tH8KpF4H">
+<meta name="robots" content="noindex, nofollow" data-page-node-id="Zp1Hbya6K7osu0t1KiwmOV">
+<link rel="stylesheet" href="assets/style.css" data-page-node-id="LIfyLNFe3lEBAiCWRuuodv">
 <style>
   .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6vw 5vw; }
   .auth-card {
@@ -31,73 +31,98 @@
   .auth-msg.ok { color: var(--ok, #3b6d11); }
   .sec-title { margin: 22px 0 2px; font-size: 13px; letter-spacing: .12em; color: var(--ink-2, #6b6157); }
   .hint { font-size: 12px; color: var(--ink-2, #6b6157); margin-top: 4px; }
+  /* 子用户 SQL 建议块：可折叠，默认收起不吓人 */
+  details.sqlbox { margin-top: 8px; font-size: 12px; }
+  details.sqlbox summary { cursor: pointer; color: var(--accent, #c96f4a); }
+  details.sqlbox pre {
+    margin: 8px 0 0; padding: 10px 12px; overflow-x: auto;
+    background: var(--paper-2, #efe8d9); border: 1px solid var(--line, rgba(31,26,22,.14));
+    border-radius: 8px; font-size: 12px; line-height: 1.6; color: var(--ink, #1f1a16);
+  }
 </style>
 </head>
-<body data-page-node-id="FlMcC4gx3Hf34D4NfJ9yQR">
-<div class="auth-wrap" data-page-node-id="HA6IfPLaEIJkyTBPZmfw1i">
-  <form class="auth-card" id="installForm" autocomplete="off" data-page-node-id="vvVBIlZMZebYHI7JkENeaW">
-    <div class="kicker" data-page-node-id="DMR1CMcJqzCODLzLGT9Vee">首次运行</div>
-    <h1 data-page-node-id="GuUspR5ihVvzBpkTRrfKz0">安装向导</h1>
-    <p class="muted" style="font-size:13px;margin:4px 0 0" data-page-node-id="l3l0SbgIRQ82aXSEZlowUD">填好下面这些信息，程序会自己建库、建表、创建管理员，然后重启生效。</p>
+<body data-page-node-id="QRcFbnMsEYvCwf0ZVWKRAQ">
+<div class="auth-wrap" data-page-node-id="E909rbyKlFhzTczO3j4jsN">
+  <form class="auth-card" id="installForm" autocomplete="off" data-page-node-id="yUHJAih3LmgCHgO6nu7Z7p">
+    <div class="kicker" data-page-node-id="3wna3WUpi0J6FbFavwAvet">首次运行</div>
+    <h1 data-page-node-id="3DP52kodIP3xDX03hdkO8e">安装向导</h1>
+    <p class="muted" style="font-size:13px;margin:4px 0 0" data-page-node-id="ttCRrWqx4JeyngZGZqLl5v">填好下面这些信息，程序会自己建库、建表、创建管理员，然后重启生效。</p>
 
-    <div class="sec-title" data-page-node-id="zU48U7gUlGSHP63JPVsM08">数据库（MariaDB / MySQL）</div>
-    <div class="field row2" data-page-node-id="wm0fqiuc0DEUjYhfXHtjfM">
-      <div data-page-node-id="dCYoIELEKn0SQ8KRnetVZY"><label for="host" data-page-node-id="gxUdnwzr2HSPPkHJM98pPL">地址</label>
-        <input id="host" type="text" value="127.0.0.1" required data-page-node-id="PY7iTl00N5zxXxdwJyI2Jf">
-      </div>
-      <div data-page-node-id="TI1aRrTQF34gpeMN3ocjvo"><label for="port" data-page-node-id="ciElGRjXbyT6mKOkhVggtp">端口</label>
-        <input id="port" type="text" value="3306" required data-page-node-id="AR1CuXsBEe4DLxHGVZ2oFI">
-      </div>
-    </div>
-    <div class="field row2" data-page-node-id="I75LFwPrsfRYaFbqBc1O0S">
-      <div data-page-node-id="5k55RzexFUispJvgBruMBZ"><label for="dbuser" data-page-node-id="xSpnopDXzAOAG6lRxAhOwf">数据库用户</label>
-        <input id="dbuser" type="text" value="root" required data-page-node-id="LlhUhneugYV0geHpPtoEWv">
-      </div>
-      <div data-page-node-id="MxfpscPQuFteVMUP3p21AA"><label for="dbpass" data-page-node-id="TLlwwJEupNCL2d8oQdbS4r">数据库密码</label>
-        <input id="dbpass" type="password" placeholder="可留空（无密码）" data-page-node-id="TQKkqpDDmM3em5bO1fQAMH">
-      </div>
-    </div>
-    <div class="field" data-page-node-id="yBr2CC0Bqi5upN77WiHCUP">
-      <label for="dbname" data-page-node-id="mlX4teWCitAnF7ivZqqsvG">库名（不存在会自动创建）</label>
-      <input id="dbname" type="text" value="kongyu" required data-page-node-id="5jpUyk98XAUFMR1JXe2vAx">
-    </div>
+    <div class="sec-title" data-page-node-id="E4oHYGYyW5UDXdmd4vUTfr">数据库（MariaDB / MySQL）</div>
+    <p class="hint" data-page-node-id="srFlnXsFHsNH6ORXcOnUYw">
+      强烈建议用<b data-page-node-id="LkaDYz8EOR3Dfow8nMvdEV">专用子账号</b>而不是 root：权限只给到这一个库，拖库撞库也伤不到别人。
+      先在数据库里执行下面三句（用 root 或 DBA 账号），再回来填表。
+    </p>
+    <details class="sqlbox" data-page-node-id="Uf0MDeProklNxmBf2EQRrT">
+      <summary data-page-node-id="ZeZfAtq35HjTCkOspsYLCc">建库 + 建子用户 SQL（点开复制）</summary>
+      <pre data-page-node-id="ZvJsCz73dJGlFexqK7Dhns">CREATE DATABASE IF NOT EXISTS kongyu
+  DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-    <div class="sec-title" data-page-node-id="klMNr1pzEWx4UFM8BHHCQN">管理员账号（写作后台用）</div>
-    <div class="field row2" data-page-node-id="q7GjEkgvLV7BRFYhQMcNPW">
-      <div data-page-node-id="z84wAPnV6OuWB85Cf1rZNY"><label for="admin" data-page-node-id="0RRC1Fw7aUBytudGz9IXAI">用户名</label>
-        <input id="admin" type="text" value="kongyu" required data-page-node-id="Ix6VSt5851bhybQhXxsSqv">
-      </div>
-      <div data-page-node-id="3K9S00Lg9o94TlIMEx2kd3"><label for="apass" data-page-node-id="Y9kYkQ2WEuAqQretwTadSj">密码（≥6位）</label>
-        <input id="apass" type="password" required minlength="6" data-page-node-id="vbwDZWRBacbl6phlWuuTd9">
-      </div>
-    </div>
+CREATE USER IF NOT EXISTS 'kongyu'@'localhost' IDENTIFIED BY '换成强密码';
+CREATE USER IF NOT EXISTS 'kongyu'@'127.0.0.1' IDENTIFIED BY '换成强密码';
 
-    <div class="sec-title" data-page-node-id="RnH6XeklCV2P2lovoTrEGO">站点信息（留空用默认，之后写进 SEO 与页面）</div>
-    <div class="field row2" data-page-node-id="XkdF8f4hzhiZ895lD7CfAy">
-      <div data-page-node-id="lqiD1xasliE6BBBfSmHkuC"><label for="sitename" data-page-node-id="JeFniX1CCaCCQLELUPEBEY">站名</label>
-        <input id="sitename" type="text" value="空雨不流泪" data-page-node-id="6vN9mm7lPlQjdhVKyfl6mR">
+GRANT ALL PRIVILEGES ON kongyu.* TO 'kongyu'@'localhost';
+GRANT ALL PRIVILEGES ON kongyu.* TO 'kongyu'@'127.0.0.1';
+FLUSH PRIVILEGES;</pre>
+    </details>
+
+    <div class="field row2" data-page-node-id="AnIEfyeZU0RHEjTs7IHWC0">
+      <div data-page-node-id="GUhIrrrD35OjVvoTvQNONb"><label for="host" data-page-node-id="hmj91zSN6gDcrfCoOICPs5">地址</label>
+        <input id="host" type="text" value="127.0.0.1" required data-page-node-id="78thKTJ4XwiqKRlKOqneaA">
       </div>
-      <div data-page-node-id="iv16kOr2wllGi4un0fKejf"><label for="author" data-page-node-id="B33lq2xFcWFhSXoDtLKAC0">作者</label>
-        <input id="author" type="text" value="空雨" data-page-node-id="HtsVDL7bSnUYdB3Yv2rcWU">
+      <div data-page-node-id="1IP7kRYxrC7jESTci2FIFw"><label for="port" data-page-node-id="pWwGwyXHOCgCndbisSSnUO">端口</label>
+        <input id="port" type="text" value="3306" required data-page-node-id="vp5RAeAXXX65pFEzR8xTJg">
       </div>
     </div>
-    <div class="field" data-page-node-id="SQ7XUBX06sIC2h8ThpcfDW">
-      <label for="tagline" data-page-node-id="bYzliW0FPeZS6xdywLME04">标语（Hero 大字与 title 用）</label>
-      <input id="tagline" type="text" value="雨没下，就别撑伞" data-page-node-id="G7FrCkX4eENd3shbqB1Qlc">
+    <div class="field row2" data-page-node-id="79qv8Ah55ehISBrulDLQvm">
+      <div data-page-node-id="Z4AVroqMkRXA6YZ4siFrwC"><label for="dbuser" data-page-node-id="lMsfSt2KcNZPWXhDVSW4FF">数据库用户（建议子账号）</label>
+        <input id="dbuser" type="text" value="kongyu" required data-page-node-id="IXl3EzlJeJZmPUgLLHNhsT">
+      </div>
+      <div data-page-node-id="fAwKkkV40HOJvNfC8c1Owg"><label for="dbpass" data-page-node-id="Ng3EPxkxPPHtNDumixdJh6">数据库密码</label>
+        <input id="dbpass" type="password" placeholder="可留空（无密码）" data-page-node-id="jnOwYvSrpFmnuUDh0ZHJqo">
+      </div>
     </div>
-    <div class="field" data-page-node-id="qepdZGXt0GVWrVK6PGCH2d">
-      <label for="sitedesc" data-page-node-id="4z4RGwlps5e6aza6b4SkyS">简介（搜索摘要 / OG 描述用）</label>
-      <input id="sitedesc" type="text" value="一个写字的地方。关于雨、关于告别、关于那些没发生的事。" data-page-node-id="gwk8nHrrBvHcpHFYGysQmO">
+    <div class="field" data-page-node-id="uzJ6v3Ih3grrClb59yyhuw">
+      <label for="dbname" data-page-node-id="JO33ttI1ljSQW3qiWlPjyT">库名（不存在会尝试自动创建；子账号无建库权限时请先用上面的 SQL 建好）</label>
+      <input id="dbname" type="text" value="kongyu" required data-page-node-id="N1v1YCaCpz1GnCi42ow1Ft">
     </div>
 
-    <button class="btn btn-primary" type="submit" id="btnInstall" data-page-node-id="z9gfcmMwOGPntxcrnt8lXy">安 装</button>
-    <div class="auth-msg" id="msg" data-page-node-id="XBPMunv3wNPn2IUucmQIey"></div>
-    <p class="hint" data-page-node-id="q9HPEwHez03z5gOPQQk8lC">安装成功后 config.json 会写在程序旁边（0600 权限），请自行备份。</p>
+    <div class="sec-title" data-page-node-id="ErfxDxb92eVjZDxGUhza0h">管理员账号（写作后台用）</div>
+    <div class="field row2" data-page-node-id="bHP2O36e33Qt9fajeuKRBp">
+      <div data-page-node-id="alyOkESramMTUvIOAGk3UK"><label for="admin" data-page-node-id="BDnF0eJrg5rVZYSXwhetFk">用户名</label>
+        <input id="admin" type="text" value="kongyu" required data-page-node-id="1svpmVBjrPnPEjBoSvnDb3">
+      </div>
+      <div data-page-node-id="ucdUdGfrk9meVlBtdUrVlk"><label for="apass" data-page-node-id="np8CwAhEkvfGXBZ45J1TBE">密码（≥6位）</label>
+        <input id="apass" type="password" required minlength="6" data-page-node-id="tzILhD6qgApK7L7DLFQbs8">
+      </div>
+    </div>
+
+    <div class="sec-title" data-page-node-id="Mdv4GMeY7TpDV5TQC0ECJN">站点信息（留空用默认，之后写进 SEO 与页面）</div>
+    <div class="field row2" data-page-node-id="r2USS5RBw4s2JDKtLH9ytQ">
+      <div data-page-node-id="RFolxrYbiyKy9V7RuwOFYB"><label for="sitename" data-page-node-id="3q7zqkuBpqJdBKvIM2yqAW">站名</label>
+        <input id="sitename" type="text" value="空雨不流泪" data-page-node-id="S6fYj4bGpGpCSVzqgMTXGB">
+      </div>
+      <div data-page-node-id="gUgt6s6GkYAkC6w56sUHE4"><label for="author" data-page-node-id="aERsI849TldvcGIVD7HBxg">作者</label>
+        <input id="author" type="text" value="空雨" data-page-node-id="hvUU4jdeCY6bGq72LTSkGS">
+      </div>
+    </div>
+    <div class="field" data-page-node-id="nzytHcginnNrWlea8w5GzQ">
+      <label for="tagline" data-page-node-id="KiHMZHWujXLqZOfZS1hWnx">标语（Hero 大字与 title 用）</label>
+      <input id="tagline" type="text" value="雨没下，就别撑伞" data-page-node-id="BYHA5j7O0GE3irXaAjGscF">
+    </div>
+    <div class="field" data-page-node-id="zG7QmeQZQG6DQZfteb4AYu">
+      <label for="sitedesc" data-page-node-id="WHDeFibfjbWZRqqE151cKj">简介（搜索摘要 / OG 描述用）</label>
+      <input id="sitedesc" type="text" value="一个写字的地方。关于雨、关于告别、关于那些没发生的事。" data-page-node-id="FzTYjiDaFQ6xjVzuLhzqnf">
+    </div>
+
+    <button class="btn btn-primary" type="submit" id="btnInstall" data-page-node-id="6FAkzOj0KlJyrNLawJuIAE">安 装</button>
+    <div class="auth-msg" id="msg" data-page-node-id="mxR0maTWheJfBHRofjzqxP"></div>
+    <p class="hint" data-page-node-id="dN2VzlwFNv6jR98pKpeVlZ">安装成功后 config.json 会写在程序旁边（0600 权限），请自行备份。</p>
   </form>
 </div>
 
 <script>
-/* 安装向导：POST /api/install → 成功后提示重启（或自动 reload 试探） */
+/* 安装向导：POST /api/install → 成功跳登录页 */
 (function () {
   'use strict';
   var msg = document.getElementById('msg');

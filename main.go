@@ -9,7 +9,7 @@
 // 填数据库地址、库名、管理员账号 → 自动建库建表 → 写 config.json → 重启生效。
 // 之后：/login 登录，/edit 写作，发布后所有在线前台经 SSE 自动更新。
 //
-// 环境变量：KY_ADDR（监听地址，默认 :8080）。其余配置都在 config.json。
+// 环境变量：KY_ADDR（监听地址，默认 :6888）。其余配置都在 config.json。
 // ============================================================================
 package main
 
@@ -33,7 +33,7 @@ import (
 var webFS embed.FS
 
 var (
-	cfgAddr = getenv("KY_ADDR", ":8080")
+	cfgAddr = getenv("KY_ADDR", ":6888")
 	// version 由构建注入：go build -ldflags "-X main.version=v1.0.0"
 	version = "dev"
 	// slug 白名单：字母数字下划线连字符 + 中文（Go 的 RE2 不认 \u，要写 \x{}）

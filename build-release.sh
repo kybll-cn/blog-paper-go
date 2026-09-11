@@ -44,7 +44,7 @@ for T in "${TARGETS[@]}"; do
   # 每个包附带的说明与配置样例
   cp config.example.json "${OUT}/" 2>/dev/null || true
   cp README.md "${OUT}/README.txt"
-  printf '本目录内容：\n  %s   可执行文件（前端已内嵌，双击/运行即可）\n  config.example.json  配置样例（复制为 config.json 或直接跑，首次访问走 /install 向导）\n  README.txt   完整说明\n\n快速开始：\n  1. 确保 MariaDB 已启动\n  2. 运行本目录的可执行文件\n  3. 浏览器打开 http://localhost:8080 → 自动进入安装向导\n' "$BIN" > "${OUT}/运行说明.txt"
+  printf '本目录内容：\n  %s   可执行文件（前端已内嵌，双击/运行即可）\n  config.example.json  配置样例（复制为 config.json 或直接跑，首次访问走 /install 向导）\n  README.txt   完整说明\n\n快速开始：\n  1. 确保 MariaDB 已启动\n  2. 运行本目录的可执行文件\n  3. 浏览器打开 http://localhost:6888 → 自动进入安装向导\n' "$BIN" > "${OUT}/运行说明.txt"
 
   # 打包：Linux 用 tar.gz，Windows 用 zip
   ( cd dist

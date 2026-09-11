@@ -6,7 +6,7 @@ const SHOT = p => path.join(__dirname, '..', 'preview', p);
 (async () => {
   const b = await launch();
   await b.viewport(1440, 1000);
-  await b.goto('http://127.0.0.1:8080/');
+  await b.goto('http://127.0.0.1:6888/');
   await sleep(2500);
   console.log('=== 页脚文本 ===');
   console.log(await b.eval(`document.querySelector('body > footer').innerText`));
@@ -19,7 +19,7 @@ const SHOT = p => path.join(__dirname, '..', 'preview', p);
   await b.eval(`document.querySelector('body > footer').scrollIntoView()`);
   await b.shot(SHOT('21-footer-police.png'));
 
-  await b.goto('http://127.0.0.1:8080/edit/');
+  await b.goto('http://127.0.0.1:6888/edit/');
   await sleep(2500);
   await b.eval(`document.getElementById('btnSettings').click()`);
   await sleep(800);
