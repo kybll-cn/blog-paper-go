@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light" data-page-node-id="GwDarzBMUomtq8bA4rwtc6">
-<head data-page-node-id="7rMjImaNSz8jbxCzBeWLHs">
-<meta charset="UTF-8" data-page-node-id="21fqCymgfzrlY2Vbid9pDB">
-<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="9ETjMmlM2Ve2fCxMasbeCa">
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>安装向导 · 空雨不流泪</title>
-<meta name="robots" content="noindex, nofollow" data-page-node-id="Zp1Hbya6K7osu0t1KiwmOV">
-<link rel="stylesheet" href="assets/style.css" data-page-node-id="LIfyLNFe3lEBAiCWRuuodv">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="assets/style.css">
 <style>
   .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6vw 5vw; }
   .auth-card {
@@ -41,21 +41,21 @@
   }
 </style>
 </head>
-<body data-page-node-id="QRcFbnMsEYvCwf0ZVWKRAQ">
-<div class="auth-wrap" data-page-node-id="E909rbyKlFhzTczO3j4jsN">
-  <form class="auth-card" id="installForm" autocomplete="off" data-page-node-id="yUHJAih3LmgCHgO6nu7Z7p">
-    <div class="kicker" data-page-node-id="3wna3WUpi0J6FbFavwAvet">首次运行</div>
-    <h1 data-page-node-id="3DP52kodIP3xDX03hdkO8e">安装向导</h1>
-    <p class="muted" style="font-size:13px;margin:4px 0 0" data-page-node-id="ttCRrWqx4JeyngZGZqLl5v">填好下面这些信息，程序会自己建库、建表、创建管理员，然后重启生效。</p>
+<body>
+<div class="auth-wrap">
+  <form class="auth-card" id="installForm" autocomplete="off">
+    <div class="kicker">首次运行</div>
+    <h1>安装向导</h1>
+    <p class="muted" style="font-size:13px;margin:4px 0 0">填好下面这些信息，程序会自己建库、建表、创建管理员，然后重启生效。</p>
 
-    <div class="sec-title" data-page-node-id="E4oHYGYyW5UDXdmd4vUTfr">数据库（MariaDB / MySQL）</div>
-    <p class="hint" data-page-node-id="srFlnXsFHsNH6ORXcOnUYw">
-      强烈建议用<b data-page-node-id="LkaDYz8EOR3Dfow8nMvdEV">专用子账号</b>而不是 root：权限只给到这一个库，拖库撞库也伤不到别人。
+    <div class="sec-title">数据库（MariaDB / MySQL）</div>
+    <p class="hint">
+      强烈建议用<b>专用子账号</b>而不是 root：权限只给到这一个库，拖库撞库也伤不到别人。
       先在数据库里执行下面三句（用 root 或 DBA 账号），再回来填表。
     </p>
-    <details class="sqlbox" data-page-node-id="Uf0MDeProklNxmBf2EQRrT">
-      <summary data-page-node-id="ZeZfAtq35HjTCkOspsYLCc">建库 + 建子用户 SQL（点开复制）</summary>
-      <pre data-page-node-id="ZvJsCz73dJGlFexqK7Dhns">CREATE DATABASE IF NOT EXISTS kongyu
+    <details class="sqlbox">
+      <summary>建库 + 建子用户 SQL（点开复制）</summary>
+      <pre>CREATE DATABASE IF NOT EXISTS kongyu
   DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE USER IF NOT EXISTS 'kongyu'@'localhost' IDENTIFIED BY '换成强密码';
@@ -66,58 +66,58 @@ GRANT ALL PRIVILEGES ON kongyu.* TO 'kongyu'@'127.0.0.1';
 FLUSH PRIVILEGES;</pre>
     </details>
 
-    <div class="field row2" data-page-node-id="AnIEfyeZU0RHEjTs7IHWC0">
-      <div data-page-node-id="GUhIrrrD35OjVvoTvQNONb"><label for="host" data-page-node-id="hmj91zSN6gDcrfCoOICPs5">地址</label>
-        <input id="host" type="text" value="127.0.0.1" required data-page-node-id="78thKTJ4XwiqKRlKOqneaA">
+    <div class="field row2">
+      <div><label for="host">地址</label>
+        <input id="host" type="text" value="127.0.0.1" required>
       </div>
-      <div data-page-node-id="1IP7kRYxrC7jESTci2FIFw"><label for="port" data-page-node-id="pWwGwyXHOCgCndbisSSnUO">端口</label>
-        <input id="port" type="text" value="3306" required data-page-node-id="vp5RAeAXXX65pFEzR8xTJg">
-      </div>
-    </div>
-    <div class="field row2" data-page-node-id="79qv8Ah55ehISBrulDLQvm">
-      <div data-page-node-id="Z4AVroqMkRXA6YZ4siFrwC"><label for="dbuser" data-page-node-id="lMsfSt2KcNZPWXhDVSW4FF">数据库用户（建议子账号）</label>
-        <input id="dbuser" type="text" value="kongyu" required data-page-node-id="IXl3EzlJeJZmPUgLLHNhsT">
-      </div>
-      <div data-page-node-id="fAwKkkV40HOJvNfC8c1Owg"><label for="dbpass" data-page-node-id="Ng3EPxkxPPHtNDumixdJh6">数据库密码</label>
-        <input id="dbpass" type="password" placeholder="可留空（无密码）" data-page-node-id="jnOwYvSrpFmnuUDh0ZHJqo">
+      <div><label for="port">端口</label>
+        <input id="port" type="text" value="3306" required>
       </div>
     </div>
-    <div class="field" data-page-node-id="uzJ6v3Ih3grrClb59yyhuw">
-      <label for="dbname" data-page-node-id="JO33ttI1ljSQW3qiWlPjyT">库名（不存在会尝试自动创建；子账号无建库权限时请先用上面的 SQL 建好）</label>
-      <input id="dbname" type="text" value="kongyu" required data-page-node-id="N1v1YCaCpz1GnCi42ow1Ft">
+    <div class="field row2">
+      <div><label for="dbuser">数据库用户（建议子账号）</label>
+        <input id="dbuser" type="text" value="kongyu" required>
+      </div>
+      <div><label for="dbpass">数据库密码</label>
+        <input id="dbpass" type="password" placeholder="可留空（无密码）">
+      </div>
     </div>
-
-    <div class="sec-title" data-page-node-id="ErfxDxb92eVjZDxGUhza0h">管理员账号（写作后台用）</div>
-    <div class="field row2" data-page-node-id="bHP2O36e33Qt9fajeuKRBp">
-      <div data-page-node-id="alyOkESramMTUvIOAGk3UK"><label for="admin" data-page-node-id="BDnF0eJrg5rVZYSXwhetFk">用户名</label>
-        <input id="admin" type="text" value="kongyu" required data-page-node-id="1svpmVBjrPnPEjBoSvnDb3">
-      </div>
-      <div data-page-node-id="ucdUdGfrk9meVlBtdUrVlk"><label for="apass" data-page-node-id="np8CwAhEkvfGXBZ45J1TBE">密码（≥6位）</label>
-        <input id="apass" type="password" required minlength="6" data-page-node-id="tzILhD6qgApK7L7DLFQbs8">
-      </div>
+    <div class="field">
+      <label for="dbname">库名（不存在会尝试自动创建；子账号无建库权限时请先用上面的 SQL 建好）</label>
+      <input id="dbname" type="text" value="kongyu" required>
     </div>
 
-    <div class="sec-title" data-page-node-id="Mdv4GMeY7TpDV5TQC0ECJN">站点信息（留空用默认，之后写进 SEO 与页面）</div>
-    <div class="field row2" data-page-node-id="r2USS5RBw4s2JDKtLH9ytQ">
-      <div data-page-node-id="RFolxrYbiyKy9V7RuwOFYB"><label for="sitename" data-page-node-id="3q7zqkuBpqJdBKvIM2yqAW">站名</label>
-        <input id="sitename" type="text" value="空雨不流泪" data-page-node-id="S6fYj4bGpGpCSVzqgMTXGB">
+    <div class="sec-title">管理员账号（写作后台用）</div>
+    <div class="field row2">
+      <div><label for="admin">用户名</label>
+        <input id="admin" type="text" value="kongyu" required>
       </div>
-      <div data-page-node-id="gUgt6s6GkYAkC6w56sUHE4"><label for="author" data-page-node-id="aERsI849TldvcGIVD7HBxg">作者</label>
-        <input id="author" type="text" value="空雨" data-page-node-id="hvUU4jdeCY6bGq72LTSkGS">
+      <div><label for="apass">密码（≥6位）</label>
+        <input id="apass" type="password" required minlength="6">
       </div>
-    </div>
-    <div class="field" data-page-node-id="nzytHcginnNrWlea8w5GzQ">
-      <label for="tagline" data-page-node-id="KiHMZHWujXLqZOfZS1hWnx">标语（Hero 大字与 title 用）</label>
-      <input id="tagline" type="text" value="雨没下，就别撑伞" data-page-node-id="BYHA5j7O0GE3irXaAjGscF">
-    </div>
-    <div class="field" data-page-node-id="zG7QmeQZQG6DQZfteb4AYu">
-      <label for="sitedesc" data-page-node-id="WHDeFibfjbWZRqqE151cKj">简介（搜索摘要 / OG 描述用）</label>
-      <input id="sitedesc" type="text" value="一个写字的地方。关于雨、关于告别、关于那些没发生的事。" data-page-node-id="FzTYjiDaFQ6xjVzuLhzqnf">
     </div>
 
-    <button class="btn btn-primary" type="submit" id="btnInstall" data-page-node-id="6FAkzOj0KlJyrNLawJuIAE">安 装</button>
-    <div class="auth-msg" id="msg" data-page-node-id="mxR0maTWheJfBHRofjzqxP"></div>
-    <p class="hint" data-page-node-id="dN2VzlwFNv6jR98pKpeVlZ">安装成功后 config.json 会写在程序旁边（0600 权限），请自行备份。</p>
+    <div class="sec-title">站点信息（留空用默认，之后写进 SEO 与页面）</div>
+    <div class="field row2">
+      <div><label for="sitename">站名</label>
+        <input id="sitename" type="text" value="空雨不流泪">
+      </div>
+      <div><label for="author">作者</label>
+        <input id="author" type="text" value="空雨">
+      </div>
+    </div>
+    <div class="field">
+      <label for="tagline">标语（Hero 大字与 title 用）</label>
+      <input id="tagline" type="text" value="雨没下，就别撑伞">
+    </div>
+    <div class="field">
+      <label for="sitedesc">简介（搜索摘要 / OG 描述用）</label>
+      <input id="sitedesc" type="text" value="一个写字的地方。关于雨、关于告别、关于那些没发生的事。">
+    </div>
+
+    <button class="btn btn-primary" type="submit" id="btnInstall">安 装</button>
+    <div class="auth-msg" id="msg"></div>
+    <p class="hint">安装成功后 config.json 会写在程序旁边（0600 权限），请自行备份。</p>
   </form>
 </div>
 
