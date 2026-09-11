@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /edit
+Disallow: /edit/
+Disallow: /login
+Disallow: /install
+Disallow: /api/

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>渲染器元素总览（验收用临时页）</title>
+<link rel="stylesheet" href="../web/assets/style.css">
+<script>
+  var q = new URLSearchParams(location.search).get('theme');
+  document.documentElement.setAttribute('data-theme', (q === 'dark' || q === 'light') ? q : 'light');
+</script>
+<style>
+  body { padding: 40px 0 80px; }
+  .kitchen { width: var(--measure); margin: 0 auto; display: grid; gap: 0; }
+  .kitchen h2 { margin-top: 44px; }
+</style>
+</head>
+<body>
+<main class="kitchen"><div class="prose" id="out"></div></main>
+<script src="../web/assets/markdown.js"></script>
+<script>
+var MD = [
+  '## 元素总览',
+  '',
+  '这是一个**粗体**、一个*斜体*、一个~~删除线~~、一段 `inline code`、一个 [站内链接](index.html) 和一个 [外链](https://example.com)。',
+  '',
+  '### 代码块',
+  '',
+  '```js',
+  'function readingTime(md) {',
+  '  const chars = (md.match(/[\\u4e00-\\u9fa5]/g) || []).length;',
+  '  return Math.max(1, Math.round(chars / 350));  // 中文 350 字/分钟',
+  '}',
+  '```',
+  '',
+  '### 引用',
+  '',
+  '> 有些东西不是为了有用才留下的，',
+  '> 它们是为了证明某段时间真的发生过。',
+  '',
+  '### 表格',
+  '',
+  '| 元素 | 支持 | 备注 |',
+  '| --- | --- | --- |',
+  '| 标题 | 是 | ATX 与 setext 两种 |',
+  '| 列表 | 是 | 可嵌套 |',
+  '| 代码块 | 是 | 围栏式，带语言标注 |',
+  '',
+  '### 列表',
+  '',
+  '- 无序第一层',
+  '- 无序第一层',
+  '  - 嵌套第二层',
+  '  - 嵌套第二层',
+  '- 无序第一层',
+  '',
+  '1. 有序一',
+  '2. 有序二',
+  '',
+  '---',
+  '',
+  '最后一段普通文字，测试行距与段间距是否舒服。'
+].join('\n');
+
+document.getElementById('out').innerHTML = KY.md.render(MD).html;
+document.getElementById('out').querySelector('p').classList.add('lead');
+</script>
+</body>
+</html>

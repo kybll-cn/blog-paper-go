@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 空雨不流泪</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* 登录卡片：沿用站点令牌，不另起炉灶 */
+  .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6vw 5vw; }
+  .auth-card {
+    width: min(420px, 92vw);
+    background: var(--paper-2, rgba(255,255,255,.55));
+    border: 1px solid var(--line, rgba(31,26,22,.14));
+    border-radius: 14px;
+    padding: 40px 38px 34px;
+  }
+  .auth-card h1 { font-size: 26px; font-weight: 500; margin: 6px 0 4px; }
+  .auth-card .kicker { margin-bottom: 2px; }
+  .auth-card .field { margin-top: 18px; }
+  .auth-card input {
+    width: 100%; box-sizing: border-box;
+    font: inherit; font-size: 15px;
+    padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--line, rgba(31,26,22,.14));
+    background: var(--paper, #f5f0e6); color: var(--ink, #1f1a16);
+  }
+  .auth-card input:focus { outline: 2px solid var(--accent, #c96f4a); outline-offset: 1px; }
+  .auth-card .btn { width: 100%; margin-top: 24px; padding: 11px; font-size: 15px; }
+  .auth-msg { margin-top: 14px; font-size: 13px; color: var(--danger, #a32d2d); min-height: 18px; }
+  .auth-foot { margin-top: 20px; text-align: center; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <form class="auth-card" id="loginForm" autocomplete="off">
+    <div class="kicker">空雨不流泪</div>
+    <h1>写作登录</h1>
+    <p class="muted" style="font-size:13px;margin:4px 0 0">只有登录者可以发布与删除；前台无需登录。</p>
+
+    <div class="field">
+      <label for="user">用户名</label>
+      <input id="user" name="user" type="text" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="pass">密码</label>
+      <input id="pass" name="pass" type="password" autocomplete="current-password" required>
+    </div>
+
+    <button class="btn btn-primary" type="submit" id="btnLogin">登 录</button>
+    <div class="auth-msg" id="msg"></div>
+    <div class="auth-foot"><a href="index.html">← 回前台</a></div>
+  </form>
+</div>
+
+<script>
+/* 极简登录页：POST /api/login，成功跳回来源页（默认 /edit/） */
+(function () {
+  'use strict';
+  var form = document.getElementById('loginForm');
+  var msg = document.getElementById('msg');
+  var btn = document.getElementById('btnLogin');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = '验证中…'; msg.textContent = '';
+    fetch('api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user: document.getElementById('user').value.trim(),
+        password: document.getElementById('pass').value
+      })
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    }).then(function (res) {
+      if (!res.ok) { msg.textContent = res.j.error || '登录失败'; return; }
+      var back = new URLSearchParams(location.search).get('next');
+      location.href = back || 'edit/';
+    }).catch(function (err) {
+      msg.textContent = '连不上后端：' + err.message;
+    }).finally(function () {
+      btn.disabled = false; btn.textContent = '登 录';
+    });
+  });
+
+  /* 已登录直接放行，省一次输入 */
+  fetch('api/me').then(function (r) { return r.json(); }).then(function (j) {
+    if (j.logged) location.href = 'edit/';
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>

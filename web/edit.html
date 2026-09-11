@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写作后台 · 空雨不流泪</title>
+<!-- 后台入口是 /edit（不是 /edit.html），前台任何地方都不挂链接；
+     noindex + 不被任何页面引用 = 搜索引擎和访客都摸不到这儿 -->
+<meta name="robots" content="noindex, nofollow">
+<script>
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'dark' || q === 'light') ? q :
+      (localStorage.getItem('theme') ||
+       (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-page="admin">
+
+<main id="app">
+
+  <!-- ===== 顶部操作条 ===== -->
+  <section class="wrap" style="padding-top:44px">
+    <div class="list-head">
+      <div>
+        <div class="kicker">写作后台 · <span id="modeBadge">探测中…</span> · <a href="../index.html">← 返回前台</a></div>
+        <h1 style="font-size:clamp(28px,3.4vw,40px);font-weight:500;line-height:1.2">写一篇，放上去</h1>
+      </div>
+      <div class="admin-bar">
+        <button class="btn" id="btnNew">新建</button>
+        <button class="btn" id="btnImport">导入 .md</button>
+        <input type="file" id="fileImport" accept=".md,.markdown,.txt" hidden>
+        <button class="btn" id="btnSettings">站点设置</button>
+        <button class="btn" id="btnLogout" hidden>退出登录</button>
+        <button class="btn" id="btnBackup">备份 JSON</button>
+        <button class="btn" id="btnRestore">恢复</button>
+        <input type="file" id="fileRestore" accept=".json" hidden>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:14px">
+      <span class="status-dot" id="dot"></span><span id="saveState">尚未修改</span>
+      &nbsp;·&nbsp; 草稿自动存在本机浏览器，关掉页面也不会丢
+      &nbsp;·&nbsp; <kbd>Ctrl</kbd>+<kbd>S</kbd> 存草稿
+    </p>
+
+    <!-- 站点设置面板：默认折叠，点"站点设置"展开。保存写回 config.json，
+         前台页脚/标题经 SSE site 事件热更新 -->
+    <div class="settings-panel" id="settingsPanel" hidden>
+      <div class="section-title">站点设置</div>
+      <div class="field-row">
+        <div class="field"><label for="stName">站名</label><input id="stName" type="text"></div>
+        <div class="field"><label for="stAuthor">作者</label><input id="stAuthor" type="text"></div>
+      </div>
+      <div class="field"><label for="stTagline">标语</label><input id="stTagline" type="text"></div>
+      <div class="field"><label for="stDesc">简介（搜索摘要 / OG 描述）</label><input id="stDesc" type="text"></div>
+      <div class="field-row">
+        <div class="field"><label for="stSince">版权起始年</label><input id="stSince" type="text" placeholder="2021"></div>
+        <div class="field"><label for="stRepo">开源地址</label><input id="stRepo" type="text" placeholder="https://github.com/..."></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="stIcp">ICP 备案号（留空则页脚不显示）</label><input id="stIcp" type="text" placeholder="京ICP备2026000000号-1"></div>
+        <div class="field"><label for="stPolice">公安备案号（留空则页脚不显示）</label><input id="stPolice" type="text" placeholder="京公网安备11010502000000号"></div>
+      </div>
+      <div class="admin-bar">
+        <button class="btn btn-primary" id="btnSaveSite">保存设置</button>
+        <button class="btn" id="btnCloseSettings">收起</button>
+      </div>
+      <p class="hint">改动即时写回 config.json；所有在线页面页脚会自动更新。</p>
+    </div>
+  </section>
+
+  <!-- ===== 左：编辑区 / 右：预览 + 已发布 ===== -->
+  <section class="admin-grid" style="padding-top:34px">
+
+    <!-- 左栏 -->
+    <div class="pane">
+      <div class="field-row">
+        <div class="field">
+          <label for="fTitle">标题</label>
+          <input id="fTitle" type="text" placeholder="今天想说什么">
+        </div>
+        <div class="field">
+          <label for="fDate">日期</label>
+          <input id="fDate" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fTags">标签（逗号分隔）</label>
+        <input id="fTags" type="text" placeholder="随笔, 生活">
+      </div>
+      <div class="field">
+        <label for="fSummary">导语 / 摘要（留空自动取正文首段）</label>
+        <input id="fSummary" type="text" placeholder="一句话讲清这篇在说什么">
+      </div>
+
+      <div class="field" style="margin-bottom:0">
+        <label for="editor">正文 · Markdown</label>
+        <div class="toolbar" id="toolbar">
+          <button class="tool" data-md="h2" title="二级标题">H2</button>
+          <button class="tool" data-md="h3" title="三级标题">H3</button>
+          <button class="tool" data-md="b" title="粗体">粗体</button>
+          <button class="tool" data-md="i" title="斜体">斜体</button>
+          <button class="tool" data-md="s" title="删除线">删除线</button>
+          <button class="tool" data-md="quote" title="引用">引用</button>
+          <button class="tool" data-md="code" title="行内代码">代码</button>
+          <button class="tool" data-md="fence" title="代码块">代码块</button>
+          <button class="tool" data-md="link" title="链接">链接</button>
+          <button class="tool" data-md="img" title="图片">图片</button>
+          <button class="tool" data-md="upload-img" title="上传本地图片并插入">传图</button>
+          <button class="tool" data-md="upload-file" title="上传附件并插入下载卡片">传件</button>
+          <button class="tool" data-md="ul" title="无序列表">列表</button>
+          <button class="tool" data-md="ol" title="有序列表">有序</button>
+          <button class="tool" data-md="table" title="表格">表格</button>
+          <button class="tool" data-md="hr" title="分割线">分割线</button>
+        </div>
+        <textarea id="editor" spellcheck="false" placeholder="## 小标题&#10;&#10;正文。支持 **粗体**、*斜体*、`代码`、> 引用、- 列表、表格与 ``` 代码块。&#10;&#10;首行正文会自动首字下沉。"></textarea>
+        <!-- 上传用的隐藏 input：传图=图片，传件=任意附件 -->
+        <input type="file" id="fileUploadImg" accept="image/*" hidden>
+        <input type="file" id="fileUploadFile" hidden>
+      </div>
+
+      <div class="admin-bar" style="margin-top:22px">
+        <button class="btn btn-primary" id="btnPublish">发布到本站</button>
+        <button class="btn" id="btnExportMd">导出 .md</button>
+        <button class="btn" id="btnExportManifest">导出 manifest.js</button>
+      </div>
+      <p class="hint" style="margin-top:12px" id="publishHint">
+        正在连接后端…（后端未启动时自动退回纯静态：发布只进本机浏览器，导出 manifest.js 才算上线）
+      </p>
+    </div>
+
+    <!-- 右栏 -->
+    <div class="pane">
+      <div class="preview-head">
+        <span>实时预览</span>
+        <span id="counter">0 字 · 约 1 分钟</span>
+      </div>
+      <div class="preview-box">
+        <div class="prose" id="preview"></div>
+      </div>
+
+      <div class="section-title">已发布（<span id="countPub">0</span>）</div>
+      <ul class="admin-list" id="pubList"></ul>
+      <p class="hint" style="margin-top:10px" id="legendHint">
+        <span class="badge local">本地</span> 仅存在于本机浏览器 ·
+        <span class="badge">内置</span> 来自 <code>posts/manifest.js</code>（改源文件才能删）
+      </p>
+
+      <div class="section-title">Markdown 速查</div>
+      <p class="hint">
+        <code>## 小标题</code> · <code>**粗体**</code> · <code>*斜体*</code> ·
+        <code>`代码`</code> · <code>&gt; 引用</code> · <code>- 列表</code> ·
+        <code>1. 有序</code> · <code>[链接](url)</code> · <code>![图](url)</code> ·
+        <code>---</code> 分割线 · 表格用 <code>|</code> 分列
+      </p>
+    </div>
+  </section>
+</main>
+
+<!-- 依赖顺序固定：解析器 → 数据层 → 文章数据 → 站点逻辑 → 后台逻辑 -->
+<script src="../assets/markdown.js"></script>
+<script src="../assets/store.js"></script>
+<script src="../posts/manifest.js"></script>
+<script src="../assets/app.js"></script>
+<script>
+/* ============================================================================
+   写作后台逻辑
+   · 编辑 → 180ms 防抖预览 → 1.2s 防抖写草稿
+   · 发布 = 写入 localStorage 的本地文章库（静态站的"发布"）
+   · 导出 = 生成 manifest.js / 单篇 .md，手动覆盖到 posts/ 即完成上线
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var S = KY.store;
+  var esc = KY.md.esc;
+
+  /* ---- DOM 引用 ---- */
+  var $ = function (id) { return document.getElementById(id); };
+  var el = {
+    title: $('fTitle'), date: $('fDate'), tags: $('fTags'), summary: $('fSummary'),
+    editor: $('editor'), preview: $('preview'), counter: $('counter'),
+    pubList: $('pubList'), countPub: $('countPub'),
+    state: $('saveState'), dot: $('dot')
+  };
+
+  var KEY_LAST = 'ky.draft.last';
+  var currentId = 'draft-new';   /* 当前编辑对象的草稿 id */
+
+  /* ---------------------------------------------------------------
+     提示条
+     --------------------------------------------------------------- */
+  var toastEl = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.classList.add('is-on');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { toastEl.classList.remove('is-on'); }, 2200);
+  }
+
+  /* ---------------------------------------------------------------
+     表单 ⇄ 对象
+     --------------------------------------------------------------- */
+  function readForm() {
+    var title = el.title.value.trim() || '未命名';
+    return {
+      slug: S.slugify(title),
+      title: title,
+      date: el.date.value || S.today(),
+      tags: el.tags.value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean),
+      summary: el.summary.value.trim() || S.autoSummary(el.editor.value),
+      markdown: el.editor.value
+    };
+  }
+
+  function fillForm(post) {
+    el.title.value = post.title || '';
+    el.date.value = post.date || S.today();
+    el.tags.value = (post.tags || []).join(', ');
+    el.summary.value = post.summary || '';
+    el.editor.value = post.markdown || '';
+    render();
+  }
+
+  /* ---------------------------------------------------------------
+     预览 + 计数
+     --------------------------------------------------------------- */
+  function render() {
+    var md = el.editor.value;
+    var res = KY.md.render(md);
+    el.preview.innerHTML = res.html || '<p class="muted" style="font-style:italic">预览区。左边敲字，这里实时长出来。</p>';
+    /* 预览里的首段也要首字下沉，和文章页保持一致（占位提示不算正文） */
+    if (md.trim()) {
+      var firstP = el.preview.querySelector('p');
+      if (firstP) firstP.classList.add('lead');
+    }
+
+    var words = S.wordCount(md);
+    el.counter.textContent = words + ' 字 · 约 ' + S.readingTime(md) + ' 分钟';
+  }
+
+  /* ---------------------------------------------------------------
+     草稿自动保存
+     --------------------------------------------------------------- */
+  function saveDraft() {
+    S.saveDraft({
+      id: currentId,
+      title: el.title.value,
+      date: el.date.value,
+      tags: el.tags.value,
+      summary: el.summary.value,
+      markdown: el.editor.value
+    });
+    try { localStorage.setItem(KEY_LAST, currentId); } catch (e) {}
+    markSaved('草稿已保存 · ' + new Date().toLocaleTimeString('zh-CN', { hour12: false }));
+  }
+
+  function markSaved(text) {
+    el.state.textContent = text;
+    el.dot.classList.add('on');
+  }
+
+  var tPreview = null, tDraft = null;
+  function onInput() {
+    el.state.textContent = '编辑中…';
+    el.dot.classList.remove('on');
+    clearTimeout(tPreview);
+    tPreview = setTimeout(render, 180);          /* 预览要快 */
+    clearTimeout(tDraft);
+    tDraft = setTimeout(saveDraft, 1200);        /* 草稿稍慢，别每次按键都写盘 */
+  }
+  ['input', 'change'].forEach(function (ev) {
+    [el.title, el.date, el.tags, el.summary, el.editor].forEach(function (n) {
+      n.addEventListener(ev, onInput);
+    });
+  });
+
+  /* ---------------------------------------------------------------
+     已发布列表
+     --------------------------------------------------------------- */
+  function renderPubList() {
+    var posts = S.all();
+    var server = S.isServerMode();
+    el.countPub.textContent = posts.length;
+    el.pubList.innerHTML = posts.map(function (p) {
+      var local = !server && S.isLocal(p.slug);
+      /* 服务器模式：每篇都可删；静态模式：只有本地产的能删 */
+      var canDel = server || local;
+      var badge = server ? '<span class="badge">服务器</span>'
+        : (local ? '<span class="badge local">本地</span>' : '<span class="badge">内置</span>');
+      return '<li>' +
+        '<span class="t" data-load="' + esc(p.slug) + '" title="点击载入编辑器">' +
+          esc(p.title) + '</span>' +
+        '<span class="small">' + esc(p.date || '') + '</span>' +
+        badge +
+        (canDel ? '<button class="btn btn-sm btn-danger" data-del="' + esc(p.slug) + '">删除</button>' : '') +
+      '</li>';
+    }).join('');
+  }
+
+  el.pubList.addEventListener('click', function (e) {
+    var load = e.target.closest('[data-load]');
+    var del = e.target.closest('[data-del]');
+    if (load) {
+      var p = S.bySlug(load.getAttribute('data-load'));
+      if (!p) return;
+      currentId = 'draft-' + p.slug;
+      fillForm(p);
+      scrollTo({ top: 0, behavior: 'smooth' });
+      toast('已载入《' + p.title + '》');
+      return;
+    }
+    if (del) {
+      var slug = del.getAttribute('data-del');
+      var target = S.bySlug(slug);
+      var scope = S.isServerMode() ? '将从服务器删除，所有人都看不到了。' : '只影响本机浏览器。';
+      if (!confirm('确定删除《' + (target ? target.title : slug) + '》？' + scope)) return;
+      S.remove(slug).then(function () {
+        S.dropDraft('draft-' + slug);
+        renderPubList();
+        toast('已删除');
+      }).catch(function (err) {
+        toast('删除失败：' + (err && err.message ? err.message : err));
+      });
+    }
+  });
+
+  /* ---------------------------------------------------------------
+     发布 / 导出 / 导入
+     --------------------------------------------------------------- */
+  $('btnPublish').addEventListener('click', function () {
+    var post = readForm();
+    if (!post.markdown.trim()) { toast('正文是空的，先写点东西'); return; }
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = '发布中…';
+    S.save(post).then(function () {
+      S.dropDraft(currentId);
+      currentId = 'draft-' + post.slug;
+      renderPubList();
+      toast(S.isServerMode()
+        ? '已发布《' + post.title + '》—— 已存入服务器，所有人可见'
+        : '已发布《' + post.title + '》—— 仅本机可见（静态模式）');
+    }).catch(function (err) {
+      toast('发布失败：' + (err && err.message ? err.message : err));
+    }).finally(function () {
+      btn.disabled = false;
+      btn.textContent = '发布到本站';
+    });
+  });
+
+  $('btnExportMd').addEventListener('click', function () {
+    var post = readForm();
+    S.download(post.slug + '.md', S.toMarkdown(post), 'text/markdown');
+    toast('已导出 ' + post.slug + '.md');
+  });
+
+  $('btnExportManifest').addEventListener('click', function () {
+    S.download('manifest.js', S.exportManifest(), 'text/javascript');
+    toast('已导出 manifest.js，覆盖 posts/manifest.js 即刻上线');
+  });
+
+  $('btnBackup').addEventListener('click', function () {
+    S.download('kongyu-backup-' + S.today() + '.json', JSON.stringify(S.all(), null, 2), 'application/json');
+    toast('已备份全部文章');
+  });
+
+  $('btnNew').addEventListener('click', function () {
+    if (!confirm('新建一篇？当前编辑内容若是草稿，已自动保存过，可从草稿恢复。')) return;
+    currentId = 'draft-new';
+    fillForm({ title: '', date: S.today(), tags: [], summary: '', markdown: '' });
+    el.title.focus();
+  });
+
+  /* 导入 .md */
+  $('btnImport').addEventListener('click', function () { $('fileImport').click(); });
+  $('fileImport').addEventListener('change', function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      var post = S.fromMarkdown(r.result, f.name);
+      currentId = 'draft-' + post.slug;
+      fillForm(post);
+      saveDraft();
+      toast('已导入《' + post.title + '》');
+    };
+    r.readAsText(f, 'utf-8');
+    e.target.value = '';
+  });
+
+  /* 恢复备份 */
+  $('btnRestore').addEventListener('click', function () { $('fileRestore').click(); });
+  $('fileRestore').addEventListener('change', function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var arr = JSON.parse(r.result);
+        if (!Array.isArray(arr)) throw new Error('不是数组');
+        if (!confirm('将合并 ' + arr.length + ' 篇文章到本机浏览器，同名覆盖。继续？')) return;
+        arr.forEach(function (p) { if (p && p.slug) S.save(p); });
+        renderPubList();
+        toast('已恢复 ' + arr.length + ' 篇');
+      } catch (err) {
+        toast('文件读不懂：' + err.message);
+      }
+    };
+    r.readAsText(f, 'utf-8');
+    e.target.value = '';
+  });
+
+  /* ---------------------------------------------------------------
+     工具栏：往光标处插入 Markdown 片段
+     --------------------------------------------------------------- */
+  var SNIPPETS = {
+    h2:    { pre: '## ', wrap: false },
+    h3:    { pre: '### ', wrap: false },
+    b:     { pre: '**', post: '**', wrap: true },
+    i:     { pre: '*', post: '*', wrap: true },
+    s:     { pre: '~~', post: '~~', wrap: true },
+    quote: { pre: '> ', wrap: false },
+    code:  { pre: '`', post: '`', wrap: true },
+    link:  { pre: '[', post: '](https://)', wrap: true },
+    img:   { pre: '![', post: '](https://)', wrap: true }
+  };
+
+  $('toolbar').addEventListener('click', function (e) {
+    var btn = e.target.closest('.tool');
+    if (!btn) return;
+    var kind = btn.getAttribute('data-md');
+
+    /* 上传类按钮：触发隐藏 file input，选完文件由 change 回调插入 */
+    if (kind === 'upload-img' || kind === 'upload-file') {
+      if (!S.isServerMode()) { toast('上传需要后端在线（纯静态模式没有存储）'); return; }
+      var remember = kind;
+      var input = kind === 'upload-img' ? $('fileUploadImg') : $('fileUploadFile');
+      input.onchange = function () {
+        if (input.files[0]) uploadAndInsert(input.files[0], remember);
+        input.value = '';
+      };
+      input.click();
+      return;
+    }
+
+    var ta = el.editor;
+    var start = ta.selectionStart, end = ta.selectionEnd;
+    var sel = ta.value.slice(start, end);
+    var out;
+
+    if (SNIPPETS[kind]) {
+      var s = SNIPPETS[kind];
+      out = s.pre + (sel || (s.wrap ? '文字' : '')) + (s.post || '');
+    } else if (kind === 'fence') {
+      out = '```js\n' + (sel || '// 代码') + '\n```';
+    } else if (kind === 'ul' || kind === 'ol') {
+      var mark = kind === 'ul' ? '- ' : '1. ';
+      var lines = (sel || '列表项').split('\n');
+      out = lines.map(function (l, i) {
+        return (kind === 'ol' ? (i + 1) + '. ' : mark) + l;
+      }).join('\n');
+    } else if (kind === 'table') {
+      out = '| 列一 | 列二 |\n| --- | --- |\n| 内容 | 内容 |';
+    } else if (kind === 'hr') {
+      out = '\n---\n';
+    }
+
+    ta.setRangeText(out, start, end, 'end');
+    ta.focus();
+    onInput();
+  });
+
+  /* Ctrl/Cmd + S → 存草稿 */
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      saveDraft();
+      toast('草稿已保存');
+    }
+  });
+
+  /* ---------------------------------------------------------------
+     登录态：服务器模式显示"退出"；未登录的写操作会被 store 跳去 /login
+     --------------------------------------------------------------- */
+  $('btnLogout').addEventListener('click', function () {
+    if (confirm('确定退出登录？')) S.logout();
+  });
+
+  function refreshAuthUI() {
+    if (!S.isServerMode()) return;
+    S.me().then(function (j) {
+      var btn = $('btnLogout');
+      btn.hidden = !j.logged;
+      if (j.logged) {
+        btn.textContent = '退出（' + j.user + '）';
+        var badge = document.getElementById('modeBadge');
+        if (badge) badge.textContent = '已连后端 · 已登录 ' + j.user;
+      } else {
+        var b2 = document.getElementById('modeBadge');
+        if (b2) b2.textContent = '已连后端 · 未登录（发布时会跳登录页）';
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     上传：POST /api/upload（multipart），成功后把结果插进正文光标处
+       图片 → ![名字](url)；附件 → [名字](url)（前端渲染成下载卡片）
+     --------------------------------------------------------------- */
+  function uploadAndInsert(file, kind) {
+    var fd = new FormData();
+    fd.append('file', file);
+    toast('上传中… ' + file.name);
+    fetch(S.isServerMode() ? '../api/upload' : 'api/upload', {
+      method: 'POST', body: fd, credentials: 'same-origin'
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    }).then(function (res) {
+      if (!res.ok) { toast('上传失败：' + (res.j.error || '未知错误')); return; }
+      var j = res.j;
+      var snippet = kind === 'upload-img'
+        ? '![' + j.name + '](' + j.url + ')'
+        : '[' + j.name + '](' + j.url + ')';
+      var ta = el.editor;
+      ta.setRangeText(snippet + '\n', ta.selectionStart, ta.selectionEnd, 'end');
+      ta.focus();
+      onInput();
+      toast('已插入 ' + j.name + '（' + Math.round(j.size / 1024) + ' KB）');
+    }).catch(function (err) {
+      toast('上传出错：' + err.message);
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     站点设置面板：展开时从 /api/site 回填，保存走 PUT
+     --------------------------------------------------------------- */
+  function openSettings() {
+    if (!S.isServerMode()) { toast('站点设置需要后端在线'); return; }
+    var p = $('settingsPanel');
+    p.hidden = !p.hidden;
+    if (p.hidden) return;
+    fetch('../api/site', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (s) {
+      $('stName').value = s.name || '';
+      $('stAuthor').value = s.author || '';
+      $('stTagline').value = s.tagline || '';
+      $('stDesc').value = s.description || '';
+      $('stSince').value = s.copyright_since || '';
+      $('stRepo').value = s.repo_url || '';
+      $('stIcp').value = s.icp || '';
+      $('stPolice').value = s.police || '';
+    }).catch(function () {});
+  }
+  $('btnSettings').addEventListener('click', openSettings);
+  $('btnCloseSettings').addEventListener('click', function () { $('settingsPanel').hidden = true; });
+  $('btnSaveSite').addEventListener('click', function () {
+    var btn = this; btn.disabled = true; btn.textContent = '保存中…';
+    S.saveSite({
+      name: $('stName').value, author: $('stAuthor').value,
+      tagline: $('stTagline').value, description: $('stDesc').value,
+      copyright_since: $('stSince').value, repo_url: $('stRepo').value,
+      icp: $('stIcp').value, police: $('stPolice').value
+    }).then(function () {
+      toast('站点设置已保存，前台页脚实时更新');
+    }).catch(function (err) {
+      toast('保存失败：' + (err.message || err));
+    }).finally(function () { btn.disabled = false; btn.textContent = '保存设置'; });
+  });
+
+  /* ---------------------------------------------------------------
+     启动：优先恢复上次编辑的草稿
+     --------------------------------------------------------------- */
+  (function boot() {
+    var last = null;
+    try { last = localStorage.getItem(KEY_LAST); } catch (e) {}
+    var draft = last ? S.drafts()[last] : null;
+
+    if (draft) {
+      currentId = draft.id;
+      el.title.value = draft.title || '';
+      el.date.value = draft.date || S.today();
+      el.tags.value = draft.tags || '';
+      el.summary.value = draft.summary || '';
+      el.editor.value = draft.markdown || '';
+      markSaved('已恢复上次草稿 · ' + new Date(draft.savedAt).toLocaleString('zh-CN', { hour12: false }));
+    } else {
+      el.date.value = S.today();
+      el.state.textContent = '新的一篇';
+    }
+    render();
+    renderPubList();
+
+    /* 等数据层探测完成后，按模式刷新徽标、列表和提示文案 */
+    S.ready.then(function (isServer) {
+      var badge = document.getElementById('modeBadge');
+      var hint = document.getElementById('publishHint');
+      var legend = document.getElementById('legendHint');
+      if (isServer) {
+        badge.textContent = '已连后端（MariaDB）';
+        hint.innerHTML =
+          '当前为<b>服务器模式</b>：「发布到本站」通过 <code>PUT /api/posts/&lt;slug&gt;</code> 写入 MariaDB，' +
+          '所有人刷新即可看到，在线前台经 SSE 推送<b>无需刷新</b>自动更新。<br>写操作需要登录（未登录会自动跳 /login）。' +
+          '「导出 .md / manifest.js」降级为本地备份工具，依然可用。';
+        legend.innerHTML =
+          '<span class="badge">服务器</span> 存于 MariaDB，全站可见，点删除即真删。';
+        refreshAuthUI();
+        /* SSE 变更：文章列表刷新（change）；站点设置由前台页脚自行热更新，这里不动 */
+        S.onChange(function (kind) {
+          if (kind && kind !== 'change') return;
+          renderPubList(); refreshAuthUI(); toast('文章列表已同步');
+        });
+      } else {
+        badge.textContent = '纯静态模式';
+        hint.innerHTML =
+          '后端未启动，当前为<b>纯静态模式</b>：「发布到本站」= 存进本机浏览器（只有你看得到）。<br>' +
+          '要真正上线：点「导出 manifest.js」覆盖 <code>posts/manifest.js</code>，' +
+          '或启动后端 <code>go run .</code> 后刷新本页。';
+        legend.innerHTML =
+          '<span class="badge local">本地</span> 仅存在于本机浏览器 · ' +
+          '<span class="badge">内置</span> 来自 <code>posts/manifest.js</code>（改源文件才能删）';
+      }
+      renderPubList();
+    });
+  })();
+})();
+</script>
+</body>
+</html>

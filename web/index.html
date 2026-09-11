@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--SEO:HEAD-->
+<title>空雨不流泪 —— 雨没下，就别撑伞</title>
+<meta name="description" content="空雨不流泪 · 一个写字的地方。关于雨、关于告别、关于那些没发生的事。">
+<meta name="author" content="空雨">
+<!--SEO:HEAD-END-->
+<!-- 上列 HEAD 区在服务器模式由 Go 按安装配置实时重写（SEO: canonical/OG/JSON-LD）；
+     纯静态模式（file://）保留这份兜底，两模式共用一份模板 -->
+<!-- 顶栏/页脚与正文由 JS 渲染；先把主题定下来，避免亮暗闪烁 -->
+<script>
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'dark' || q === 'light') ? q :
+      (localStorage.getItem('theme') ||
+       (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="home">
+
+<main id="app">
+  <!--
+    首页由 assets/app.js 的 initHome() 填入：
+    Hero（编辑式双栏）→ 文章列表（标签筛选 + 搜索）→ 关于
+    这样导航、页脚、列表三处只写一份，改站名只需改 assets/store.js 的 SITE
+  -->
+  <noscript>
+    <div class="wrap" style="padding:80px 0">
+      <h1 style="font-size:32px;font-weight:500;margin-bottom:16px">空雨不流泪</h1>
+      <p class="muted">本站的文章列表由 JavaScript 渲染，请开启 JavaScript 后刷新。</p>
+    </div>
+  </noscript>
+</main>
+
+<!-- 依赖顺序固定：解析器 → 数据层 → 文章数据 → 页面逻辑 -->
+<script src="assets/markdown.js"></script>
+<script src="assets/store.js"></script>
+<script src="posts/manifest.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

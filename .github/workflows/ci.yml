@@ -1,0 +1,40 @@
+name: CI
+
+# 每次 push 与 PR 都跑：格式化检查、vet、交叉编译冒烟、前端自检。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27'
+
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || { echo "未格式化的文件："; gofmt -l .; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: vet & build
+        run: |
+          go vet ./...
+          go build -o kongyu .
+          ./kongyu --version
+
+      - name: 前端自检（56 项断言）
+        run: node tools/selftest.js
+
+      - name: 交叉编译冒烟（四平台）
+        run: |
+          for t in linux/amd64 linux/arm64 windows/amd64 windows/arm64; do
+            CGO_ENABLED=0 GOOS=${t%/*} GOARCH=${t#*/} go build -o /dev/null . || exit 1
+          done
+          echo "四平台交叉编译 OK"

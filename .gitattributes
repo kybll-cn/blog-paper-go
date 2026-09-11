@@ -1,0 +1,12 @@
+# 换行策略：Windows 检出源码用 CRLF 无所谓，但脚本与数据必须 LF，
+# 否则 Linux 上 ./build-release.sh 会报 "bad interpreter: /bin/bash^M"
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制不 diff
+*.png binary
+*.jpg binary
+*.exe binary
+/dist/ export-ignore

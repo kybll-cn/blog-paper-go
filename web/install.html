@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-page-node-id="V2tOtIdkE9cuBsTQPnWQZI">
+<head data-page-node-id="H4SumpISIE8X99gHW9Pw5w">
+<meta charset="UTF-8" data-page-node-id="9279kvWvdt9lmdQAimhoW7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="6Mq2mURJLkUc9kyoTBnF0r">
+<title>安装向导 · 空雨不流泪</title>
+<meta name="robots" content="noindex, nofollow" data-page-node-id="YCZQ5GUoCMjF4UqULJAlKw">
+<link rel="stylesheet" href="assets/style.css" data-page-node-id="CHzqNNVt9hxdb2tH8KpF4H">
+<style>
+  .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6vw 5vw; }
+  .auth-card {
+    width: min(560px, 94vw);
+    background: var(--paper-2, rgba(255,255,255,.55));
+    border: 1px solid var(--line, rgba(31,26,22,.14));
+    border-radius: 14px;
+    padding: 40px 38px 34px;
+  }
+  .auth-card h1 { font-size: 26px; font-weight: 500; margin: 6px 0 4px; }
+  .auth-card .field { margin-top: 14px; }
+  .auth-card input, .auth-card select {
+    width: 100%; box-sizing: border-box;
+    font: inherit; font-size: 15px;
+    padding: 9px 12px; border-radius: 8px;
+    border: 1px solid var(--line, rgba(31,26,22,.14));
+    background: var(--paper, #f5f0e6); color: var(--ink, #1f1a16);
+  }
+  .auth-card input:focus { outline: 2px solid var(--accent, #c96f4a); outline-offset: 1px; }
+  .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+  .auth-card .btn { width: 100%; margin-top: 22px; padding: 11px; font-size: 15px; }
+  .auth-msg { margin-top: 14px; font-size: 13px; color: var(--danger, #a32d2d); min-height: 18px; white-space: pre-wrap; }
+  .auth-msg.ok { color: var(--ok, #3b6d11); }
+  .sec-title { margin: 22px 0 2px; font-size: 13px; letter-spacing: .12em; color: var(--ink-2, #6b6157); }
+  .hint { font-size: 12px; color: var(--ink-2, #6b6157); margin-top: 4px; }
+</style>
+</head>
+<body data-page-node-id="FlMcC4gx3Hf34D4NfJ9yQR">
+<div class="auth-wrap" data-page-node-id="HA6IfPLaEIJkyTBPZmfw1i">
+  <form class="auth-card" id="installForm" autocomplete="off" data-page-node-id="vvVBIlZMZebYHI7JkENeaW">
+    <div class="kicker" data-page-node-id="DMR1CMcJqzCODLzLGT9Vee">首次运行</div>
+    <h1 data-page-node-id="GuUspR5ihVvzBpkTRrfKz0">安装向导</h1>
+    <p class="muted" style="font-size:13px;margin:4px 0 0" data-page-node-id="l3l0SbgIRQ82aXSEZlowUD">填好下面这些信息，程序会自己建库、建表、创建管理员，然后重启生效。</p>
+
+    <div class="sec-title" data-page-node-id="zU48U7gUlGSHP63JPVsM08">数据库（MariaDB / MySQL）</div>
+    <div class="field row2" data-page-node-id="wm0fqiuc0DEUjYhfXHtjfM">
+      <div data-page-node-id="dCYoIELEKn0SQ8KRnetVZY"><label for="host" data-page-node-id="gxUdnwzr2HSPPkHJM98pPL">地址</label>
+        <input id="host" type="text" value="127.0.0.1" required data-page-node-id="PY7iTl00N5zxXxdwJyI2Jf">
+      </div>
+      <div data-page-node-id="TI1aRrTQF34gpeMN3ocjvo"><label for="port" data-page-node-id="ciElGRjXbyT6mKOkhVggtp">端口</label>
+        <input id="port" type="text" value="3306" required data-page-node-id="AR1CuXsBEe4DLxHGVZ2oFI">
+      </div>
+    </div>
+    <div class="field row2" data-page-node-id="I75LFwPrsfRYaFbqBc1O0S">
+      <div data-page-node-id="5k55RzexFUispJvgBruMBZ"><label for="dbuser" data-page-node-id="xSpnopDXzAOAG6lRxAhOwf">数据库用户</label>
+        <input id="dbuser" type="text" value="root" required data-page-node-id="LlhUhneugYV0geHpPtoEWv">
+      </div>
+      <div data-page-node-id="MxfpscPQuFteVMUP3p21AA"><label for="dbpass" data-page-node-id="TLlwwJEupNCL2d8oQdbS4r">数据库密码</label>
+        <input id="dbpass" type="password" placeholder="可留空（无密码）" data-page-node-id="TQKkqpDDmM3em5bO1fQAMH">
+      </div>
+    </div>
+    <div class="field" data-page-node-id="yBr2CC0Bqi5upN77WiHCUP">
+      <label for="dbname" data-page-node-id="mlX4teWCitAnF7ivZqqsvG">库名（不存在会自动创建）</label>
+      <input id="dbname" type="text" value="kongyu" required data-page-node-id="5jpUyk98XAUFMR1JXe2vAx">
+    </div>
+
+    <div class="sec-title" data-page-node-id="klMNr1pzEWx4UFM8BHHCQN">管理员账号（写作后台用）</div>
+    <div class="field row2" data-page-node-id="q7GjEkgvLV7BRFYhQMcNPW">
+      <div data-page-node-id="z84wAPnV6OuWB85Cf1rZNY"><label for="admin" data-page-node-id="0RRC1Fw7aUBytudGz9IXAI">用户名</label>
+        <input id="admin" type="text" value="kongyu" required data-page-node-id="Ix6VSt5851bhybQhXxsSqv">
+      </div>
+      <div data-page-node-id="3K9S00Lg9o94TlIMEx2kd3"><label for="apass" data-page-node-id="Y9kYkQ2WEuAqQretwTadSj">密码（≥6位）</label>
+        <input id="apass" type="password" required minlength="6" data-page-node-id="vbwDZWRBacbl6phlWuuTd9">
+      </div>
+    </div>
+
+    <div class="sec-title" data-page-node-id="RnH6XeklCV2P2lovoTrEGO">站点信息（留空用默认，之后写进 SEO 与页面）</div>
+    <div class="field row2" data-page-node-id="XkdF8f4hzhiZ895lD7CfAy">
+      <div data-page-node-id="lqiD1xasliE6BBBfSmHkuC"><label for="sitename" data-page-node-id="JeFniX1CCaCCQLELUPEBEY">站名</label>
+        <input id="sitename" type="text" value="空雨不流泪" data-page-node-id="6vN9mm7lPlQjdhVKyfl6mR">
+      </div>
+      <div data-page-node-id="iv16kOr2wllGi4un0fKejf"><label for="author" data-page-node-id="B33lq2xFcWFhSXoDtLKAC0">作者</label>
+        <input id="author" type="text" value="空雨" data-page-node-id="HtsVDL7bSnUYdB3Yv2rcWU">
+      </div>
+    </div>
+    <div class="field" data-page-node-id="SQ7XUBX06sIC2h8ThpcfDW">
+      <label for="tagline" data-page-node-id="bYzliW0FPeZS6xdywLME04">标语（Hero 大字与 title 用）</label>
+      <input id="tagline" type="text" value="雨没下，就别撑伞" data-page-node-id="G7FrCkX4eENd3shbqB1Qlc">
+    </div>
+    <div class="field" data-page-node-id="qepdZGXt0GVWrVK6PGCH2d">
+      <label for="sitedesc" data-page-node-id="4z4RGwlps5e6aza6b4SkyS">简介（搜索摘要 / OG 描述用）</label>
+      <input id="sitedesc" type="text" value="一个写字的地方。关于雨、关于告别、关于那些没发生的事。" data-page-node-id="gwk8nHrrBvHcpHFYGysQmO">
+    </div>
+
+    <button class="btn btn-primary" type="submit" id="btnInstall" data-page-node-id="z9gfcmMwOGPntxcrnt8lXy">安 装</button>
+    <div class="auth-msg" id="msg" data-page-node-id="XBPMunv3wNPn2IUucmQIey"></div>
+    <p class="hint" data-page-node-id="q9HPEwHez03z5gOPQQk8lC">安装成功后 config.json 会写在程序旁边（0600 权限），请自行备份。</p>
+  </form>
+</div>
+
+<script>
+/* 安装向导：POST /api/install → 成功后提示重启（或自动 reload 试探） */
+(function () {
+  'use strict';
+  var msg = document.getElementById('msg');
+  var btn = document.getElementById('btnInstall');
+
+  document.getElementById('installForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = '建库建表中…'; msg.className = 'auth-msg'; msg.textContent = '';
+
+    fetch('api/install', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        host: document.getElementById('host').value.trim(),
+        port: document.getElementById('port').value.trim(),
+        user: document.getElementById('dbuser').value.trim(),
+        pass: document.getElementById('dbpass').value,
+        db:   document.getElementById('dbname').value.trim(),
+        admin: document.getElementById('admin').value.trim(),
+        password: document.getElementById('apass').value,
+        site_name: document.getElementById('sitename').value.trim(),
+        site_tagline: document.getElementById('tagline').value.trim(),
+        site_desc: document.getElementById('sitedesc').value.trim(),
+        site_author: document.getElementById('author').value.trim()
+      })
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    }).then(function (res) {
+      if (!res.ok) { msg.textContent = res.j.error || '安装失败'; return; }
+      msg.className = 'auth-msg ok';
+      msg.textContent = '安装完成！正在跳转到登录页…';
+      setTimeout(function () { location.href = 'login'; }, 1200);
+    }).catch(function (err) {
+      msg.textContent = '请求失败：' + err.message;
+    }).finally(function () {
+      btn.disabled = false; btn.textContent = '安 装';
+    });
+  });
+
+  /* 已安装的用户误入此页：给个提示而不是白屏表单 */
+  fetch('api/posts').then(function (r) {
+    if (r.ok) {
+      msg.className = 'auth-msg ok';
+      msg.textContent = '本站已安装完毕。若要重装，请删除 config.json 后重启程序。';
+      btn.disabled = true;
+    }
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>

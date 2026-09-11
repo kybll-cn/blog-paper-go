@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--SEO:HEAD-->
+<title>文章 · 空雨不流泪</title>
+<meta name="description" content="空雨不流泪 · 文章">
+<!--SEO:HEAD-END-->
+<!-- 服务器模式：整块 HEAD 由 Go 按文章与站点配置重写（canonical/OG/JSON-LD）；
+     纯静态模式：保留兜底，标题由 JS 覆盖 -->
+<script>
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'dark' || q === 'light') ? q :
+      (localStorage.getItem('theme') ||
+       (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="post">
+
+<main id="app">
+  <!--
+    文章页由 assets/app.js 的 initPost() 填入：
+    页头（标签/标题/导语/作者日期时长字数）→ 目录 + 正文 → 上下篇 → 阅读进度
+    阅读地址：post.html?p=<slug>
+  -->
+  <noscript>
+    <div class="wrap" style="padding:80px 0">
+      <p class="muted">正文由 JavaScript 渲染，请开启 JavaScript 后刷新。</p>
+    </div>
+  </noscript>
+</main>
+
+<script src="assets/markdown.js"></script>
+<script src="assets/store.js"></script>
+<script src="posts/manifest.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

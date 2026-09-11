@@ -1,0 +1,87 @@
+name: Release
+
+# 推 v* 标签（如 v1.0.0）时自动交叉编译四平台并发布 GitHub Release。
+# 手动触发（workflow_dispatch）可测试构建，不发 Release。
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 创建 Release 需要
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27'
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: '0'
+        run: |
+          NAME=kongyu-${{ matrix.goos }}-${{ matrix.goarch }}
+          BIN=$NAME
+          [ "${{ matrix.goos }}" = "windows" ] && BIN=$BIN.exe
+          mkdir -p "dist/$NAME"
+          go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME:-dev}" \
+            -o "dist/$NAME/$BIN" .
+          cp config.example.json "dist/$NAME/"
+          cp README.md "dist/$NAME/README.txt"
+          # 打包：Linux tar.gz，Windows zip
+          ( cd dist
+            if [ "${{ matrix.goos }}" = "windows" ]; then
+              zip -qr "$NAME.zip" "$NAME"
+            else
+              tar czf "$NAME.tar.gz" "$NAME"
+            fi
+          )
+
+      - name: Checksum
+        run: |
+          cd dist
+          for f in *.tar.gz *.zip; do
+            [ -e "$f" ] || continue
+            sha256sum "$f" > "$f.sha256"
+          done
+          ls -la
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kongyu-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/*.tar.gz dist/*.zip dist/*.sha256
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

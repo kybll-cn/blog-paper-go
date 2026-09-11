@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>移动端验收（用 iframe 强制真实 390px 视口）</title>
+<style>
+  body { margin: 0; padding: 14px; background: #333; display: flex; gap: 14px; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { color: #bbb; font: 12px system-ui; margin-bottom: 6px; }
+  iframe { border: 0; background: #fff; display: block; }
+</style>
+</head>
+<body>
+<!-- Windows 下 Chrome 无头模式的窗口宽度有最小值（~500px），
+     直接 --window-size=390 会被夹住。用固定宽度的 iframe 才能得到真正的 390px 布局视口。 -->
+<figure>
+  <figcaption>首页 390 × 1400</figcaption>
+  <iframe src="../web/index.html" width="390" height="1400"></iframe>
+</figure>
+<figure>
+  <figcaption>文章页 390 × 1400</figcaption>
+  <iframe src="../post.html?p=kong-yu-san-zhong-jie-shi" width="390" height="1400"></iframe>
+</figure>
+</body>
+</html>
