@@ -132,7 +132,10 @@ FLUSH PRIVILEGES;</pre>
     e.preventDefault();
     btn.disabled = true; btn.textContent = '建库建表中…'; msg.className = 'auth-msg'; msg.textContent = '';
 
-    fetch('api/install', {
+    /* 必须用绝对路径：相对路径 api/install 在 /install 页面会被浏览器
+       解析成 /api/api/install，命中安装模式的 302 跳转，fetch 自动跟随
+       后拿到 200 的 HTML 页面——安装会被"假成功"，全链路报废 */
+    fetch('/api/install', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -154,7 +157,7 @@ FLUSH PRIVILEGES;</pre>
       if (!res.ok) { msg.textContent = res.j.error || '安装失败'; return; }
       msg.className = 'auth-msg ok';
       msg.textContent = '安装完成！正在跳转到登录页…';
-      setTimeout(function () { location.href = 'login'; }, 1200);
+      setTimeout(function () { location.href = '/login'; }, 1200);
     }).catch(function (err) {
       msg.textContent = '请求失败：' + err.message;
     }).finally(function () {
@@ -162,12 +165,19 @@ FLUSH PRIVILEGES;</pre>
     });
   });
 
-  /* 已安装的用户误入此页：给个提示而不是白屏表单 */
-  fetch('api/posts').then(function (r) {
-    if (r.ok) {
-      msg.className = 'auth-msg ok';
-      msg.textContent = '本站已安装完毕。若要重装，请删除 config.json 后重启程序。';
-      btn.disabled = true;
+  /* 已安装的用户误入此页：给个提示而不是白屏表单。
+     绝对路径 + JSON 校验双保险：若后端把本请求 302 到 /install 页面，
+     跟随后拿到的是 text/html，content-type 对不上就不会误报"已安装" */
+  fetch('/api/posts', { headers: { 'Accept': 'application/json' } }).then(function (r) {
+    var ct = (r.headers.get('content-type') || '');
+    if (r.ok && ct.indexOf('application/json') !== -1) {
+      return r.json().then(function (data) {
+        if (Array.isArray(data)) {
+          msg.className = 'auth-msg ok';
+          msg.textContent = '本站已安装完毕。若要重装，请删除 config.json 后重启程序。';
+          btn.disabled = true;
+        }
+      });
     }
   }).catch(function () {});
 })();
